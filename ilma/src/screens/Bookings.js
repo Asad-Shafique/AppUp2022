@@ -7,6 +7,11 @@ import FontSize from "../utils/FontSize";
 import AppImages from "../themes/AppImages";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import Utils from '../utils/Utils'
+import Modal from 'react-native-modal'
+import Icon from "react-native-vector-icons/FontAwesome5";
+import { FloatingAction } from "react-native-floating-action";
+import call from "react-native-phone-call";
+
 
 const Bookings = () => {
 
@@ -16,6 +21,24 @@ const Bookings = () => {
     const [phone, setPhone] = useState("")
     const [users, setUsers] = useState([])
     const [loading, setLoading] = useState(false)
+    const [visible, setVisible] = useState(false)
+    const [data, setData] = useState("")
+
+    const actions = [
+        {
+            text: "Phone Call Contractor",
+            icon: AppImages.phone2,
+            name: "phone",
+            position: 2
+        },
+        {
+            text: "Whatsapp Contractor",
+            icon: AppImages.whatsapp,
+            name: "whatsapp",
+            position: 1
+        },
+    ]
+
 
     useEffect(() => {
         setLoading(true)
@@ -24,7 +47,14 @@ const Bookings = () => {
 
     }, [])
 
-    const onBookPress = () => {
+    const onBookPress = (data) => {
+        console.log(data);
+        setData(data)
+        setVisible(true)
+        Utils.Alert("Success", " Your Ride Has Been Booked, The Contractor Will Call You Soon ")
+    }
+    const onBookRideClick = () => {
+        setVisible(false)
         Utils.Alert("Success", " Your Ride Has Been Booked, The Contractor Will Call You Soon ")
     }
     const checkGPS = () => {
@@ -58,7 +88,7 @@ const Bookings = () => {
 
     const goToSpecificLoation = (data) => {
         console.log(" data to : " + JSON.stringify(data));
-        
+
         if (data.to == "Swat") {
             console.log("Swat");
             Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.8065' + ',' + '72.3548');
@@ -76,33 +106,40 @@ const Bookings = () => {
             Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.9093' + ',' + '73.6507');
         }
 
-        return
-        if (data.to = "") {
-            alert("Empty")
-        }
-        
-        else if (data.to = "Naran") {
-            console.log("Narannnnn");
+    }
+
+    const goToDestination = (name) => {
+
+        console.log("name === >" + name);
+        if (name == "location") {
             return
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.9093' + ',' + '73.6507');
+            let lat = data.item.lat;
+            let lng = data.item.lng;
+            console.log("latitude ===> " + lat + "====== longitutde ===>" + lng);
+            //geo:0,0?q=" + latitude + "," + longitude + "(" + label + ")
+            // openMap({ latitude: { lat }, longitude: { lng }, zoom: 50 }, navigation = true,);
+            //'geo:24.8497667,67.0541147'
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + lat + ',' + lng);
         }
-        else if (data.to = "Neelum Valley") {
-            console.log("Neelum Valley");
-            return
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.5985' + ',' + '73.9073');
+        else if (name == 'phone') {
+            onPhoneCall()
         }
-        else if (data.to = "Zairat") {
-            console.log("Zairat");
-            return
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '30.3939' + ',' + '67.7169');
-        }
-        else if (data.to = "Swat") {
-            console.log("Swat");
-            return
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.8065' + ',' + '72.3548');
+        else {
+            Linking.openURL("whatsapp://send?text=hello&phone=03492055477");
         }
 
     }
+
+    const onPhoneCall = () => {
+        const args = {
+            number: "03492055477", // String value with the number to call
+            prompt: false, // Optional boolean property. Determines if the user should be prompted prior to the call 
+            skipCanOpen: true // Skip the canOpenURL check
+        }
+
+        call(args).catch(console.error)
+    }
+
 
     const getuser = async () => {
         console.log("getUser");
@@ -120,7 +157,7 @@ const Bookings = () => {
                 setUsers(data)
             });
 
-      addUser()
+        addUser()
 
     }
 
@@ -179,20 +216,94 @@ const Bookings = () => {
                                 <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>Days</Text>
                                 <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10 }} >{data.days}</Text>
 
-                                <TouchableOpacity onPress={() => goToSpecificLoation(data)} style={{ height: 30, position: "absolute", right: 0, top: 10, width: 150, backgroundColor: Colors.THEME_COLOR, justifyContent: "center", alignItems: "center", borderBottomLeftRadius: 20, borderTopLeftRadius: 20 }}>
-                                    <Text style={{ color: 'white' }}>See Route Planning</Text>
-                                </TouchableOpacity>
+
                             </View>
                         </View>
 
-                        <TouchableOpacity onPress={() => onBookPress()} style={{ height: 50, justifyContent: "center", alignItems: "center", width: "100%", backgroundColor: Colors.THEME_COLOR, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, position: "absolute", bottom: 0 }}>
-                            <Text style={{ color: Colors.THEME_TEXT_WHITE, letterSpacing: 10, fontWeight: "bold" }}>Book Your Ride</Text>
+                        <TouchableOpacity onPress={() => onBookPress(data)} style={{ height: 50, justifyContent: "center", alignItems: "center", width: "100%", backgroundColor: Colors.THEME_COLOR, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, position: "absolute", bottom: 0 }}>
+                            <Text style={{ color: Colors.THEME_TEXT_WHITE, letterSpacing: 10, fontWeight: "bold" }}>RIDE DETAILS</Text>
                         </TouchableOpacity>
 
                     </View>
 
                 </View>)
             }
+
+            <Modal isVisible={visible}>
+                <View style={{ height: "100%", backgroundColor: 'white', borderRadius: 50 }}>
+                    <TouchableOpacity onPress={() => setVisible(false)}>
+                        <Icon name="xing" size={20} style={{ position: "absolute", right: 30, top: 20 }} />
+                    </TouchableOpacity>
+
+                    <View style={{ marginTop: 20 }}>
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   From                    </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.from}</Text>
+                            </View>
+                        </View>
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   To                         </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.to}</Text>
+                            </View>
+                        </View>
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   days                     </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.days}</Text>
+                            </View>
+                        </View>
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   Description        </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.desc}</Text>
+                            </View>
+                        </View>
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   Price                   </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.price}</Text>
+                            </View>
+                        </View>
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   See Location       </Text>
+                                <TouchableOpacity onPress={() => goToSpecificLoation(data)} style={{ height: 30, width: 170, backgroundColor: Colors.THEME_COLOR, justifyContent: "center", alignItems: "center", borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
+                                    <Text style={{ color: 'white' }}>See Route Planning</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        <View style={{ marginTop: 20 }}>
+                            <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold", alignSelf: "center" }}>   Images       </Text>
+                            <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                                <Image source={{ uri: data.img1 }} style={{ height: 200, width: "40%" }} resizeMode='contain' />
+                                <Image source={{ uri: data.img2 }} style={{ height: 200, width: "40%", marginLeft: 20 }} resizeMode='contain' />
+                            </View>
+                        </View>
+                    </View>
+                    <TouchableOpacity onPress={() => onBookRideClick() } style={{ height: 40, justifyContent: "center", alignItems: "center", width: "100%", backgroundColor: Colors.THEME_COLOR, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, position: "absolute", bottom: 0 }}>
+                        <Text style={{ color: Colors.THEME_TEXT_WHITE, letterSpacing: 10, fontWeight: "bold" }}>BOOK YOUR RIDE</Text>
+                    </TouchableOpacity>
+                </View>
+                <FloatingAction
+                    actions={actions}
+                    showBackground={false}
+                    iconHeight={25}
+                    iconWidth={25}
+                    onPressItem={(name) => goToDestination(name)}
+                />
+            </Modal>
         </ScrollView>
     )
 }
