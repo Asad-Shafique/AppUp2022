@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "444930078310",
+    "project_id": "data-f905b",
+    "storage_bucket": "data-f905b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444930078310:android:f1ec5d2db07b955d8f9fa7",
+        "android_client_info": {
+          "package_name": "com.ilma"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "444930078310-bg48807vko02bn8snlki1ppjottm0fg2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBg-e2mcCgG3SMOLzdVo-qUxy6LGTcy4hc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "444930078310-bg48807vko02bn8snlki1ppjottm0fg2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
