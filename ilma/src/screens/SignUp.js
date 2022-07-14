@@ -123,7 +123,7 @@ const SignUp = ({ navigation }) => {
                     <Icon name='user' size={20} style={{ marginLeft: 15 }} />
                     <TextInput
                       autoCapitalize='none'
-                        onSubmitEditing={() => { emailRef.current.focus() }}
+                        onSubmitEditing={() => { phoneRef.current.focus() }}
                         placeholder='name'
                         onChangeText={(value) => setUserName(value)}
                         style={{ width: 230, marginLeft: 10 }}

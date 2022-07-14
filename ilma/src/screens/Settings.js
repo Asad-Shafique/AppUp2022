@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Dimensions, TextInput, TouchableOpacity, ScrollView, Image, Switch, StatusBar } from 'react-native'
+import { View, Text, Dimensions, TextInput, TouchableOpacity, ScrollView, Image, Switch, StatusBar, Linking } from 'react-native'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import Colors from '../themes/Colors'
 import FontSize from '../utils/FontSize'
@@ -229,11 +229,13 @@ const Settings = ({ navigation }) => {
                         borderColor: Colors.COLOR_BLACK,
                         justifyContent: 'center',
 
-                    }}>
+                    }}
+                        onPress={() => Linking.openURL('http://cybvegit.com/')}
+                    >
                         <Text style={{
                             fontSize: 14,
                             color: Colors.COLOR_BLACK
-                        }}>Send in Diagnostics</Text>
+                        }}>Send Developer A Message</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -251,11 +253,13 @@ const Settings = ({ navigation }) => {
                         borderColor: Colors.COLOR_BLACK,
                         justifyContent: 'center',
 
-                    }}>
+                    }}
+                        onPress={() => Linking.openURL('http://cybvegit.com/portfolio/index.html')}
+                    >
                         <Text style={{
                             fontSize: 14,
                             color: Colors.COLOR_BLACK
-                        }}>Legal</Text>
+                        }}>Developer Profile</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -273,11 +277,13 @@ const Settings = ({ navigation }) => {
                         borderColor: Colors.COLOR_BLACK,
                         justifyContent: 'center',
 
-                    }}>
+                    }}
+                        onPress={() => Linking.openURL('http://cybvegit.com/')}
+                    >
                         <Text style={{
                             fontSize: 14,
                             color: Colors.COLOR_BLACK
-                        }}>Privacy Policies</Text>
+                        }}>Software House</Text>
                     </TouchableOpacity>
                 </View>
 

@@ -8,14 +8,15 @@ import AppImages from "../themes/AppImages";
 import LocationServicesDialogBox from "react-native-android-location-services-dialog-box";
 import Utils from '../utils/Utils'
 import Modal from 'react-native-modal'
+import Modal2 from 'react-native-modal'
 import Icon from "react-native-vector-icons/FontAwesome5";
 import { FloatingAction } from "react-native-floating-action";
 import call from "react-native-phone-call";
 
 
-const Bookings = () => {
+const Bookings = ({ navigation }) => {
 
-
+    const [searchText, setSearchText] = useState('');
     const [name, setName] = useState("");
     const [standard, setStandard] = useState("");
     const [phone, setPhone] = useState("")
@@ -23,6 +24,9 @@ const Bookings = () => {
     const [loading, setLoading] = useState(false)
     const [visible, setVisible] = useState(false)
     const [data, setData] = useState("")
+    const [visible2, setVisible2] = useState(false)
+    const [image, setImage] = useState()
+    const [filteredData, setFilteredData] = useState([])
 
     const actions = [
         {
@@ -47,11 +51,38 @@ const Bookings = () => {
 
     }, [])
 
+
+    const searchTexts = (e) => {
+
+        setSearchText(e)
+        let text = e.toLowerCase()
+        console.log("data in search == >" + JSON.stringify(users))
+        let user = users
+        let filteredName = user.filter((item) => {
+            console.log("Item is === >" + JSON.stringify(item));
+            return (
+                item.from.toLowerCase().match(text) ||
+                item.to.toLowerCase().match(text) ||
+                item.days.toLowerCase().match(text)
+            )
+        })
+        if (!text || text === '') {
+            setData(users)
+        } else if (!Array.isArray(filteredName) && !filteredName.length) {
+            // set no data flag to true so as to render flatlist conditionally
+
+
+        } else if (Array.isArray(filteredName)) {
+
+            setData(filteredName)
+        }
+    }
+
     const onBookPress = (data) => {
-        console.log(data);
+        // console.log(data);
         setData(data)
         setVisible(true)
-        Utils.Alert("Success", " Your Ride Has Been Booked, The Contractor Will Call You Soon ")
+        // Utils.Alert("Success", " Your Ride Has Been Booked, The Contractor Will Call You Soon ")
     }
     const onBookRideClick = () => {
         setVisible(false)
@@ -91,22 +122,24 @@ const Bookings = () => {
 
         if (data.to == "Swat") {
             console.log("Swat");
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.8065' + ',' + '72.3548');
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + data.lat + ',' + data.lng);
         }
         else if (data.to == "Neelum Valley") {
             console.log("Neelum valley");
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.5985' + ',' + '73.9073');
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + data.lat + ',' + data.lng);
         }
         else if (data.to == "Zairat") {
             console.log("Zairat");
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '30.3939' + ',' + '67.7169');
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + data.lat + ',' + data.lng);
         }
         else if (data.to == "Naran") {
             console.log("Naran");
-            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + '34.9093' + ',' + '73.6507');
+            Linking.openURL('https://www.google.com/maps/search/?api=1&query=' + data.lat + ',' + data.lng);
         }
 
     }
+
+
 
     const goToDestination = (name) => {
 
@@ -151,19 +184,20 @@ const Bookings = () => {
                 let data = []
                 querySnapshot.forEach(documentSnapshot => {
                     data.push(documentSnapshot.data())
-                    console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+                    // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
                 });
-                console.log("data array : " + data);
+                // console.log("data array : " + data);
                 setUsers(data)
             });
+            setLoading(false)
 
-        addUser()
+        // addUser()
 
     }
 
     const addUser = () => {
 
-        console.log("data ::" + JSON.stringify(users));
+        // console.log("data ::" + JSON.stringify(users));
         setLoading(false)
     }
 
@@ -176,7 +210,45 @@ const Bookings = () => {
 
             <View style={{ height: 150, backgroundColor: Colors.THEME_COLOR, borderBottomLeftRadius: 60, borderBottomRightRadius: 60, justifyContent: "center", alignItems: "center" }}>
                 <Text style={{ fontSize: FontSize.FONT_SIZE_24, color: 'white', fontWeight: "bold" }}>BOOKINGS</Text>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate("Upcomings")}
+                    style={{ height: 50, width: 50, position: "absolute", top: 20, right: 10 }}>
+                    <View style={{ height: 10, width: 10, borderRadius: 20, backgroundColor: 'orange', position: "absolute", right: 10 }}></View>
+                    <Icon name="inbox" size={30} color="white" />
+                </TouchableOpacity>
             </View>
+
+            {/* <View style={{
+                width: "80%",
+                height: 40,
+                backgroundColor: Colors.THEME_WHITE,
+                alignSelf: "center",
+                borderBottomLeftRadius: 20,
+                borderTopRightRadius: 20,
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 20
+            }}>
+                <View style={{
+                    marginLeft: 10
+                }}>
+                    <Icon name="search" size={20} />
+                </View>
+                <View>
+                    <TextInput style={{
+                        height: 40,
+                        width: 200,
+                        marginLeft: 10,
+                        justifyContent: "center",
+                        fontSize: 16
+                    }}
+                        onChangeText={(text) => searchTexts(text)}
+                        value={searchText}
+                        clearTextOnFocus
+                        placeholder="Search Here"
+                    />
+                </View>
+            </View> */}
 
             {/* 
                 <TouchableOpacity onPress={() => addUser()}>
@@ -207,7 +279,9 @@ const Bookings = () => {
                             <View style={{ flexDirection: "row" }}>
 
                                 <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>Desc</Text>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.desc}</Text>
+                                <ScrollView fadingEdgeLength={100} style={{ height: 50 }}>
+                                    <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, marginLeft: 10 }} >{data.desc}</Text>
+                                </ScrollView>
                             </View>
                         </View>
 
@@ -238,46 +312,66 @@ const Bookings = () => {
                     <View style={{ marginTop: 20 }}>
                         <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   From                    </Text>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.from}</Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   From                    </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, marginLeft: 10, width: 250 }} >{data.from}</Text>
                             </View>
                         </View>
 
                         <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
                             <View style={{ flexDirection: "row" }}>
 
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   To                         </Text>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.to}</Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   To                         </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, marginLeft: 10, width: 250 }} >{data.to}</Text>
                             </View>
                         </View>
 
                         <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
                             <View style={{ flexDirection: "row" }}>
 
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   days                     </Text>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.days}</Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   days                     </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, marginLeft: 10, width: 250 }} >{data.days}</Text>
                             </View>
                         </View>
 
                         <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
                             <View style={{ flexDirection: "row" }}>
 
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   Description        </Text>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.desc}</Text>
-                            </View>
-                        </View>
-                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
-                            <View style={{ flexDirection: "row" }}>
-
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   Price                   </Text>
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, margin: 10, width: 250 }} >{data.price}</Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   Description        </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, marginLeft: 10, width: "50%" }} >{data.desc}</Text>
                             </View>
                         </View>
 
                         <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
                             <View style={{ flexDirection: "row" }}>
 
-                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold" }}>   See Location       </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   Price                   </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, marginLeft: 10, width: 250 }} >{data.price}</Text>
+                            </View>
+                        </View>
+
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   Famous Places    </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, width: 170 }} >{data.must}</Text>
+                            </View>
+                        </View>
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   Package                </Text>
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_COLOR, width: 170 }} >{data.details}</Text>
+                            </View>
+                        </View>
+
+
+
+                        <View style={{ justifyContent: "space-evenly", marginTop: 20 }}>
+                            <View style={{ flexDirection: "row" }}>
+
+                                <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold" }}>   See Location       </Text>
                                 <TouchableOpacity onPress={() => goToSpecificLoation(data)} style={{ height: 30, width: 170, backgroundColor: Colors.THEME_COLOR, justifyContent: "center", alignItems: "center", borderTopLeftRadius: 20, borderBottomRightRadius: 20 }}>
                                     <Text style={{ color: 'white' }}>See Route Planning</Text>
                                 </TouchableOpacity>
@@ -285,14 +379,25 @@ const Bookings = () => {
                         </View>
 
                         <View style={{ marginTop: 20 }}>
-                            <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, margin: 10, fontWeight: "bold", alignSelf: "center" }}>   Images       </Text>
+                            <Text style={{ fontSize: FontSize.FONT_SIZE_16, color: Colors.THEME_TEXT_BLACK, marginLeft: 10, fontWeight: "bold", alignSelf: "center" }}>   Images       </Text>
                             <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-                                <Image source={{ uri: data.img1 }} style={{ height: 200, width: "40%" }} resizeMode='contain' />
-                                <Image source={{ uri: data.img2 }} style={{ height: 200, width: "40%", marginLeft: 20 }} resizeMode='contain' />
+                                <TouchableOpacity
+                                    // onPress={() => onModal2Press(1)}
+                                    style={{ height: 200, width: "40%" }}
+                                >
+                                    <Image source={{ uri: data.img1 }} style={{ height: "100%", width: "100%" }} resizeMode='contain' />
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    // onPress={() => onModal2Press(2)}
+                                    style={{ height: 200, width: "40%" }}
+                                >
+                                    <Image source={{ uri: data.img2 }} style={{ height: "100%", width: "100%", marginLeft: 20 }} resizeMode='contain' />
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={() => onBookRideClick() } style={{ height: 40, justifyContent: "center", alignItems: "center", width: "100%", backgroundColor: Colors.THEME_COLOR, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, position: "absolute", bottom: 0 }}>
+                    <TouchableOpacity onPress={() => onBookRideClick()} style={{ height: 40, justifyContent: "center", alignItems: "center", width: "100%", backgroundColor: Colors.THEME_COLOR, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, position: "absolute", bottom: 0 }}>
                         <Text style={{ color: Colors.THEME_TEXT_WHITE, letterSpacing: 10, fontWeight: "bold" }}>BOOK YOUR RIDE</Text>
                     </TouchableOpacity>
                 </View>
@@ -304,7 +409,8 @@ const Bookings = () => {
                     onPressItem={(name) => goToDestination(name)}
                 />
             </Modal>
-        </ScrollView>
+
+        </ScrollView >
     )
 }
 

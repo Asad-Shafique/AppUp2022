@@ -7,5 +7,6 @@ export default  {
     phone2 : require('../assets/phone2.png'),
     location2 : require('../assets/location2.png'),
     whatsapp : require('../assets/whatsapp.png'),
+    dp : require('../assets/dp.jpg'),
 
 }
